@@ -1,15 +1,31 @@
 import React from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
 	const { user: { _id, name, email, role } } = isAuthenticated();
-	return (
-		<Layout
-			title="Dashboard"
-			description="User Dashborad"
-			className="container"
-		>
+
+	const userLinks = () => {
+		return (
+			<div className="card">
+				<h4 className="card-header">User Links</h4>
+				<li className="list-group-item">
+					<Link className="nav-link" to="/cart">
+						My Cart
+					</Link>
+				</li>
+				<li className="list-group-item">
+					<Link className="nav-link" to="/profile/update">
+						Update Profile
+					</Link>
+				</li>
+			</div>
+		);
+	};
+
+	const userInfo = () => {
+		return (
 			<div className="card mb-5">
 				<h3 className="card-header">User Information</h3>
 				<ul>
@@ -20,12 +36,32 @@ const Dashboard = () => {
 					</li>
 				</ul>
 			</div>
+		);
+	};
 
+	const purchaseHistory = () => {
+		return (
 			<div className="card">
 				<h3 className="card-header">Purchase History</h3>
 				<ul>
 					<li className="list-group-item">History</li>
 				</ul>
+			</div>
+		);
+	};
+
+	return (
+		<Layout
+			title="Dashboard"
+			description={`G'day ${name}! Welcome to your dashboard`}
+			className="container-fluid"
+		>
+			<div className="row">
+				<div className="col-3">{userLinks()}</div>
+				<div className="col-9">
+					{userInfo()}
+					{purchaseHistory()}
+				</div>
 			</div>
 		</Layout>
 	);
