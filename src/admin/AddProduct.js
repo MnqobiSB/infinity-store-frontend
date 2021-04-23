@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { createProduct } from './apiAdmin';
 
 const AddProduct = () => {
-	const { user, token } = isAuthenticated();
 	const [ values, setValues ] = useState({
 		name: '',
 		description: '',
@@ -24,6 +23,7 @@ const AddProduct = () => {
 		formData: ''
 	});
 
+	const { user, token } = isAuthenticated();
 	const {
 		name,
 		description,
@@ -53,11 +53,29 @@ const AddProduct = () => {
 	};
 
 	const clickSubmit = (event) => {
-		//
+		event.preventDefault();
+		setValues({ ...values, error: '', loading: true });
+
+		createProduct(user._id, token, formData).then((data) => {
+			if (data.error) {
+				setValues({ ...values, error: data.error });
+			} else {
+				setValues({
+					...values,
+					name: '',
+					description: '',
+					photo: '',
+					price: '',
+					quantity: '',
+					loading: false,
+					createdProduct: data.name
+				});
+			}
+		});
 	};
 
 	const newPostForm = () => (
-		<form onSubmit={clickSubmit()} className="mb-3">
+		<form onSubmit={clickSubmit} className="mb-3">
 			<h4>Post Photo</h4>
 			<div className="form-group">
 				<label className="btn btn-secondary">
@@ -106,6 +124,7 @@ const AddProduct = () => {
 					className="form-control"
 				>
 					<option value="60715fa428d3ed29b4f0a8df">Cologne</option>
+					<option value="60715fa428d3ed29b4f0a8df">Cologne</option>
 				</select>
 			</div>
 
@@ -115,6 +134,7 @@ const AddProduct = () => {
 					onChange={handleChange('brand')}
 					className="form-control"
 				>
+					<option value="6071685e28d3ed29b4f0a8e5">Avon</option>
 					<option value="6071685e28d3ed29b4f0a8e5">Avon</option>
 				</select>
 			</div>
