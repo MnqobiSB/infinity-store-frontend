@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
 import Card from './Card';
-import { getCategories, getFilteredProducts } from './apiCore';
-import Checkbox from './Checkbox';
+import { getCategories, getBrands, getFilteredProducts } from './apiCore';
+import CategoryCheckbox from './CategoryCheckbox';
+import BrandCheckbox from './BrandCheckbox';
 import RadioBox from './RadioBox';
 import { prices } from './fixedPrices';
 
 const Shop = () => {
 	const [ myFilters, setMyFilters ] = useState({
-		filters: { category: [], price: [] }
+		filters: { category: [], brand: [], price: [] }
 	});
 	const [ categories, setCategories ] = useState([]);
+	const [ brands, setBrands ] = useState([]);
 	const [ error, setError ] = useState(false);
 	const [ limit, setLimit ] = useState(6);
 	const [ skip, setSkip ] = useState(0);
@@ -18,11 +20,23 @@ const Shop = () => {
 	const [ filteredResults, setFilteredResults ] = useState([]);
 
 	const init = () => {
-		getCategories().then((data) => {
+		let brands;
+		let categories;
+		getBrands().then((data) => {
 			if (data.error) {
 				setError(data.error);
 			} else {
-				setCategories(data);
+				brands = data;
+				setBrands(brands);
+				// setValues({...values, brands: data})
+				getCategories().then((categoriesData) => {
+					if (categoriesData.error) {
+						setError(data.error);
+					} else {
+						categories = categoriesData;
+						setCategories(categories);
+					}
+				});
 			}
 		});
 	};
@@ -105,10 +119,19 @@ const Shop = () => {
 				<div className="col-4">
 					<h4>Filter by categories</h4>
 					<ul>
-						<Checkbox
+						<CategoryCheckbox
 							categories={categories}
 							handleFilters={(filters) =>
 								handleFilters(filters, 'category')}
+						/>
+					</ul>
+
+					<h4>Filter by brands</h4>
+					<ul>
+						<BrandCheckbox
+							brands={brands}
+							handleFilters={(filters) =>
+								handleFilters(filters, 'brand')}
 						/>
 					</ul>
 
